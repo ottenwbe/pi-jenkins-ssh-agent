@@ -6,6 +6,10 @@ https://github.com/jenkinsci/docker-ssh-slave
 
 ## Build
 
+### Build on Jenkins
+
+### Build locally
+
 ```
 docker build --build-arg RELEASE=stretch-20190524 -t rpi-jenkins-ssh-agent:test .
 ```
