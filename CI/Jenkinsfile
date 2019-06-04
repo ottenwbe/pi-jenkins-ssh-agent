@@ -1,0 +1,27 @@
+pipeline { 
+    agent { node { label 'sshagent' } } 
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timeout(time: 2, unit: 'HOURS')
+    }
+    environment {
+        APP         = 'jenkins-ssh-slave'
+        VERSION     = 'test'
+        ARCH        = 'armv7'
+        OS          = 'linux'
+        BUILDDATE   = sh(returnStdout: true, script: "date +'%y.%m.%d %H:%M:%S'")
+        RELEASE     = 'stretch-20190524'
+    }
+    stages {
+        stage('Build Jenkins Container'){
+            steps {
+                sh "docker -H ${env.PI_REMOTE_HOST} build --build-arg RELEASE=${env.RELEASE} --label 'version=${env.VERSION}' --label 'build_date=${env.BUILDDATE}'  --label 'maintaner=Beate Ottenwaelder <b.ottenwaelder@gmail.com>' -t chii-nas:32769/ottenwbe/${env.ARCH}-${env.APP}:${env.VERSION} ."
+            }
+        }
+        stage('Push Container to Local Registry') {           
+            steps {
+                sh "docker -H ${env.PI_REMOTE_HOST} version"                
+            }
+        }        
+    }
+}

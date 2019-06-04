@@ -1,0 +1,17 @@
+user:
+  jenkins:
+    exists: true
+    uid: 1000
+    gid: 1000
+package:
+  openjdk:
+    installed: false
+  docker-ce:
+    installed: true
+  git:
+    installed: true
+service:
+  ssh:
+    enabled: true
+    running: false
+
