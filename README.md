@@ -8,6 +8,10 @@ https://github.com/jenkinsci/docker-ssh-slave
 
 ### Build on Jenkins
 
+1. Create a Pipeline or Multibranch Pipeline Project
+1. Select this repository (git@github.com:ottenwbe/pi-jenkins-ssh-agent.git) or a fork
+1. Select as Scriptpath 'Jenkinsfile'
+
 ### Build locally
 
 ```
