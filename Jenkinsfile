@@ -33,9 +33,9 @@ pipeline {
         VERSION     = '0.1.0'
         ARCH        = 'armv7' 
         OS          = 'linux'
+        ORG         = 'ottenwbe'
         BUILD_DATE   = sh(returnStdout: true, script: "date +'%y.%m.%d %H:%M:%S'")
         RELEASE     = 'stretch-20190524'
-        ORG         = 'ottenwbe'
     }
     stages {
         stage('Build'){
