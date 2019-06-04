@@ -13,15 +13,20 @@ pipeline {
         RELEASE     = 'stretch-20190524'
     }
     stages {
-        stage('Build Jenkins Container'){
+        stage('Build'){
             steps {
                 sh "docker -H ${env.PI_REMOTE_HOST} build --build-arg RELEASE=${env.RELEASE} --label 'version=${env.VERSION}' --label 'build_date=${env.BUILD_DATE}'  --label 'maintaner=Beate Ottenwaelder <b.ottenwaelder@gmail.com>' -t ottenwbe/${env.ARCH}-${env.APP}:${env.VERSION} ."
             }
         }
-        stage('Push Container to Local Registry') {           
+        stage('Test'){
+            steps {
+                sh "echo hi"
+            }
+        }
+        stage('Publish') {           
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "docker -H ${env.PI_REMOTE_HOST} login --password ${USERNAME} --username ${PASSWORD}"
+                    sh "docker -H ${env.PI_REMOTE_HOST} login --username ${USERNAME} --password ${PASSWORD}"
                     sh "docker -H ${env.PI_REMOTE_HOST} push ottenwbe/${env.ARCH}-${env.APP}:${env.VERSION}"                
                 }
             }
