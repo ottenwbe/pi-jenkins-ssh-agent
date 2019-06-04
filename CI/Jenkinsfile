@@ -26,7 +26,7 @@ pipeline {
         stage('Publish') {           
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "docker -H ${env.PI_REMOTE_HOST} login --username ${USERNAME} --password ${PASSWORD}"
+                    sh "echo ${PASSWORD} | docker -H ${env.PI_REMOTE_HOST} login --username ${USERNAME} --password-stdin"
                     sh "docker -H ${env.PI_REMOTE_HOST} push ottenwbe/${env.ARCH}-${env.APP}:${env.VERSION}"                
                 }
             }
