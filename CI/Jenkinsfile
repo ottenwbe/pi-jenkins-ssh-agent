@@ -1,0 +1,72 @@
+/*
+* MIT License
+* 
+* Copyright (c) 2019 Beate Ottenwälder
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+pipeline { 
+    agent { node { label 'sshagent' } } 
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10', daysToKeepStr: '30'))
+        timeout(time: 2, unit: 'HOURS')
+    }
+    stages {
+        stage('Configure Build') {
+            steps {
+                script {
+                    def now            = new Date()
+                    def cfg            = readYaml file: 'CI/build-config.yaml'
+                    env.BUILD_DATE     = now.format("yyyy.MM.dd HH:mm:ss")
+                    env.IMAGE_TAG      = cfg.version + '.' + now.format("yyyyMMddHHmm")    
+                    env.VERSION        = cfg.version                
+                    env.BASE_IMAGE_TAG = cfg.baseimagetag
+                    env.MAINTAINER     = cfg.maintainer
+                    env.IMAGE          = "${cfg.dockerorg}/${cfg.arch}-${cfg.app}" 
+                }
+            }
+        }
+        stage('Build Docker Image'){
+            steps {
+                sh "docker build --build-arg RPI_RELEASE=${env.BASE_IMAGE_TAG} --label 'version=${env.VERSION}' --label 'build-date=${env.BUILD_DATE}'  --label 'maintainer=${env.MAINTAINER}' -t ${env.IMAGE}:${env.IMAGE_TAG} ."
+            }
+        }
+        stage('Test Docker Image') {  
+            environment{
+                GOSS_FILES_STRATEGY="cp"
+                GOSS_SLEEP="5"
+            }         
+            steps {
+                dir ("CI") {
+                    sh "dgoss run ${env.IMAGE}:${env.IMAGE_TAG}"
+                }
+            }
+        }       
+        stage('Publish Docker Image') {           
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin"
+                    sh "docker push ${env.IMAGE}:${env.IMAGE_TAG}"                
+                    sh "docker tag ${env.IMAGE}:${env.IMAGE_TAG} ${env.IMAGE}:latest"                
+                    sh "docker push ${env.IMAGE}:latest"                
+                }
+            }
+        }               
+    }
+}

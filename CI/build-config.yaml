@@ -1,0 +1,7 @@
+version: 0.2.0
+baseimagetag: stretch-20190524
+maintainer: "Beate Ottenwaelder <ottenwbe.public@gmail.com>"
+dockerorg: ottenwbe
+app: jenkins-ssh-agent
+arch: armv7
+os: linux
