@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ARG RPI_RELEASE
-FROM balenalib/rpi-raspbian:${RPI_RELEASE}
+ARG BASE_IMAGE_TAG
+FROM balenalib/rpi-raspbian:${BASE_IMAGE_TAG}
 
 ARG user=jenkins
 ARG group=jenkins

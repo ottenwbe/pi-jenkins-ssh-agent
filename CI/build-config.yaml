@@ -1,7 +1,12 @@
-version: 0.2.0
-baseimagetag: stretch-20190524
-maintainer: "Beate Ottenwaelder <ottenwbe.public@gmail.com>"
-dockerorg: ottenwbe
+version:
+  major: 0
+  minor: 2
+baseImageTag: none
+maintainer: Beate Ottenwaelder <ottenwbe.public@gmail.com>
+dockerOrg: ottenwbe
 app: jenkins-ssh-agent
 arch: armv7
 os: linux
+relaseBranch: production
+baseImageURL: https://registry.hub.docker.com/v2/repositories/balenalib/rpi-raspbian/tags?page_size=1024
+pattern: stretch-\d{8}
