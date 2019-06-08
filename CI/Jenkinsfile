@@ -21,33 +21,67 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
+
+import java.util.regex.Pattern
+
+def config
+
 pipeline { 
     agent { node { label 'sshagent' } } 
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10', daysToKeepStr: '30'))
         timeout(time: 2, unit: 'HOURS')
     }
+    triggers { cron('H H H * *') }
     stages {
+        stage('Update Build Config'){
+            steps {
+                script {                    
+                    def tmpConfig = getBuildConfig()                
+                    def imageTags = getBaseImageTags(tmpConfig)
+                    if (configNeedsUpdate(imageTags, tmpConfig)) {
+                        env.BUILD = "True"
+                        updateConfig(imageTags, tmpConfig)
+                        publishConfigToGit()
+                    }
+                }
+            }
+        }        
         stage('Configure Build') {
+            when { 
+                environment name: 'BUILD', value: 'True' 
+            }               
             steps {
                 script {
-                    def now            = new Date()
-                    def cfg            = readYaml file: 'CI/build-config.yaml'
-                    env.BUILD_DATE     = now.format("yyyy.MM.dd HH:mm:ss")
-                    env.IMAGE_TAG      = cfg.version + '.' + now.format("yyyyMMddHHmm")    
-                    env.VERSION        = cfg.version                
-                    env.BASE_IMAGE_TAG = cfg.baseimagetag
-                    env.MAINTAINER     = cfg.maintainer
-                    env.IMAGE          = "${cfg.dockerorg}/${cfg.arch}-${cfg.app}" 
+                    def now        = new Date()
+                    config         = getBuildConfig() 
+                    env.BUILD_DATE = now.format("yyyy.MM.dd HH:mm:ss")                  
+                    env.IMAGE_TAG  = "${config.version.major}.${config.version.minor}.${now.format("yyyyMMddHHmm")}"    
+                    env.VERSION    = "${config.version.major}.${config.version.minor}"
+                    env.IMAGE      = "${config.dockerOrg}/${config.arch}-${config.app}"                     
+                    
+                    echo "Configuration for image ${env.IMAGE} read"
                 }
             }
         }
         stage('Build Docker Image'){
+            when { 
+                environment name: 'BUILD', value: 'True' 
+            }               
             steps {
-                sh "docker build --build-arg RPI_RELEASE=${env.BASE_IMAGE_TAG} --label 'version=${env.VERSION}' --label 'build-date=${env.BUILD_DATE}'  --label 'maintainer=${env.MAINTAINER}' -t ${env.IMAGE}:${env.IMAGE_TAG} ."
+                sh "docker build --build-arg BASE_IMAGE_TAG=${config.baseImageTag}  \
+                                 --label 'version=${env.VERSION}' \
+                                 --label 'commit=${env.GIT_COMMIT}' \
+                                 --label 'base-image=${config.baseImageTag}' \
+                                 --label 'build-date=${env.BUILD_DATE}'  \
+                                 --label 'maintainer=${config.maintainer}' \
+                                 -t ${env.IMAGE}:${env.IMAGE_TAG} ."
             }
         }
         stage('Test Docker Image') {  
+            when { 
+                environment name: 'BUILD', value: 'True' 
+            }   
             environment{
                 GOSS_FILES_STRATEGY="cp"
                 GOSS_SLEEP="5"
@@ -57,16 +91,86 @@ pipeline {
                     sh "dgoss run ${env.IMAGE}:${env.IMAGE_TAG}"
                 }
             }
-        }       
-        stage('Publish Docker Image') {           
+        } 
+        stage('Publish Docker Image') {     
+            when { 
+                environment name: 'BUILD', value: 'True' 
+                branch "${config.relaseBranch}"
+            }   
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin"
-                    sh "docker push ${env.IMAGE}:${env.IMAGE_TAG}"                
-                    sh "docker tag ${env.IMAGE}:${env.IMAGE_TAG} ${env.IMAGE}:latest"                
-                    sh "docker push ${env.IMAGE}:latest"                
+                echo "push stopped"
+                //withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    //sh "echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin"
+                    //sh "docker push ${env.IMAGE}:${env.IMAGE_TAG}"                
+                    //sh "docker tag ${env.IMAGE}:${env.IMAGE_TAG} ${env.IMAGE}:latest"                
+                    //sh "docker push ${env.IMAGE}:latest"                
+                //}
+            }
+        }
+        stage('Tag Git Repo') {    
+            when { 
+                environment name: 'BUILD', value: 'True' 
+                branch "${config.relaseBranch}"
+            }                      
+            steps {
+                script {
+                    configGit()
+                }
+                sshagent(credentials: ['github-bot']) {
+                    sh "git tag -a ${env.IMAGE_TAG} -m \"Image ${env.IMAGE}:${env.IMAGE_TAG} \
+                                                        \n\n New image released. Get it with: \
+                                                        \n 'docker pull ${env.IMAGE}:${env.IMAGE_TAG}' \
+                                                        \n\n Base Image: ${config.baseImageTag} \""
+                    sh "git push origin ${env.IMAGE_TAG}"
                 }
             }
-        }               
+        }                       
+    }
+}
+
+def configNeedsUpdate(results, config) {
+    ((results.size() > 0) && (config.baseImageTag != results[0].name))
+}
+
+def getBuildConfig() {
+    readYaml file: 'CI/build-config.yaml'    
+}
+
+def getBaseImageTags(config) {
+    def versionsResponse = sh(returnStdout: true, script: "curl -L -s '${config.baseImageURL}'").trim()                    
+    def versions = readJSON text: versionsResponse
+    def removals = []
+    def pattern = Pattern.compile(config.pattern)
+    versions.results.each { k -> if(!(k.name ==~ pattern)) { removals << k } }
+    versions.results.removeAll(removals)
+    return versions.results
+}
+
+def configGit() {
+    withCredentials([sshUserPrivateKey(credentialsId: 'github-bot', keyFileVariable: 'key', usernameVariable: 'USERNAME')]) {                
+        sh "git config user.email '${USERNAME}'"
+        sh "git config user.name 'BettysBot'"    
+    }
+}
+
+def updateConfig(results, config) {
+    configGit()
+
+    config.baseImageTag = results[0].name
+    config.version.minor = config.version.minor + 1
+
+    writeConfig(config)
+}
+
+def writeConfig(config) {
+    sh "rm CI/build-config.yaml"
+    writeYaml file: 'CI/build-config.yaml', data: config            
+}
+
+def publishConfigToGit() {
+    sshagent(credentials: ['github-bot']) {
+        sh "git add CI/build-config.yaml"
+        sh "git commit -m\"Bump Base Image to ${env.IMAGE_TAG}\""
+        sh "git push origin HEAD:production"                    
     }
 }
