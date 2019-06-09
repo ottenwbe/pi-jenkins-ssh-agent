@@ -67,6 +67,7 @@ RUN sed -i /etc/ssh/sshd_config \
         -e 's/#LogLevel.*/LogLevel INFO/' \
     && mkdir /var/run/sshd
 
+# install goss
 RUN curl -fsSL https://goss.rocks/install -o install-goss.sh \
     && sed -i 's/arch="386"/arch="arm"/g' install-goss.sh \
     && chmod 755 install-goss.sh \

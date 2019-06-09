@@ -18,13 +18,14 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ```
 .
 ├── CI                      // Jenkins pipeline to build the ssh agent
-│   ├── build-config.yaml    
-│   ├── goss.yaml           // GOSS Tests for the Docker image
-│   └── Jenkinsfile         
-├── Dockerfile              // Docker ssh agent Dockerfile
+│   ├── build-config.yaml   // Build configuration parameters 
+│   ├── buildConfig.groovy  // Helper scripts
+│   ├── goss.yaml           // GOSS tests for the Docker image
+│   └── Jenkinsfile         // The pipeline
+├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
 ├── LICENSE
 ├── README.md
-└── setup-sshd
+└── setup-sshd              
 ```
 
 ### Build locally
@@ -34,15 +35,13 @@ Note, the BASE_IMAGE_TAG build arg has to be set to specify the version of the u
 
 ```
 git clone https://github.com/ottenwbe/pi-jenkins-ssh-agent.git
-
 cd pi-jenkins-ssh-agent
-
 docker build --build-arg BASE_IMAGE_TAG=stretch-20190524 -t rpi-jenkins-ssh-agent:test .
 ```
 
 ### Build on Jenkins
 
-A Jenkinsfile is included to run the build in a [Jenkins](https://jenkins.io/) pipeline.
+A Jenkinsfile is included to build the Docker ssh agent in a [Jenkins](https://jenkins.io/) pipeline.
 
 1. Ensure that the Docker plugin is installed and configured on Jenkins
     1. Configure the plugin to spin up a previous version of the Docker ssh agent for all builds labeled with ```sshagent```.
