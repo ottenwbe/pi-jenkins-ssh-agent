@@ -42,7 +42,7 @@ pipeline {
                     if (configNeedsUpdate(imageTags, tmpConfig)) {
                         env.BUILD = "True"
                         updateConfig(imageTags, tmpConfig)
-                        publishConfigToGit()
+                        publishConfigToGit(tmpConfig)
                     }
                 }
             }
@@ -95,10 +95,9 @@ pipeline {
         stage('Publish Docker Image') {     
             when { 
                 environment name: 'BUILD', value: 'True' 
-                branch "${config.relaseBranch}"
+                branch "${config.releaseBranch}"
             }   
             steps {
-                echo "push stopped"
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin"
                     sh "docker push ${env.IMAGE}:${env.IMAGE_TAG}"                
@@ -110,7 +109,7 @@ pipeline {
         stage('Tag Git Repo') {    
             when { 
                 environment name: 'BUILD', value: 'True' 
-                branch "${config.relaseBranch}"
+                branch "${config.releaseBranch}"
             }                      
             steps {
                 script {
@@ -167,10 +166,10 @@ def writeConfig(config) {
     writeYaml file: 'CI/build-config.yaml', data: config            
 }
 
-def publishConfigToGit() {
+def publishConfigToGit(config) {
     sshagent(credentials: ['github-bot']) {
         sh "git add CI/build-config.yaml"
-        sh "git commit -m\"Bump Base Image to ${env.IMAGE_TAG}\""
-        sh "git push origin HEAD:production"                    
+        sh "git commit -m\"Bump Base Image to ${config.baseImageTag}\""
+        sh "git push origin HEAD:${config.releaseBranch}"                    
     }
 }
