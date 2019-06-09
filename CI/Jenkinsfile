@@ -125,6 +125,14 @@ pipeline {
             }
         }                       
     }
+    post {
+        unsuccessful {
+            emailext attachLog: true, 
+                recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                subject: "[Jenkins] Job ${currentBuild.fullProjectName} (${currentBuild.number}): ${currentBuild.result}"
+                body: "For Details, see ${currentBuild.absoluteUrl}.",
+        }
+    }
 }
 
 def configNeedsUpdate(results, config) {

@@ -21,7 +21,7 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 │   ├── build-config.yaml    
 │   ├── goss.yaml           // GOSS Tests for the Docker image
 │   └── Jenkinsfile         
-├── Dockerfile              // Docker ssh agent Dockerfile
+├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
 ├── LICENSE
 ├── README.md
 └── setup-sshd
