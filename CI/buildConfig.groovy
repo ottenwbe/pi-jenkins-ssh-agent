@@ -19,10 +19,27 @@ def configGit(gitUser, credentialsId) {
 
 def updateBaseImages() {
     ensureConfigured()
+    updates = false
+
+    updates = updates || tryUpdateBaseImage()
+    updates = updates || tryUpdateForceBuild()
+
+    writeConfig()
+    updates
+}
+
+private def tryUpdateBaseImage() {
     imageTags = getBaseImageTags()
-    if (needsUpdate(imageTags)) {
-        updateConfig(imageTags[0])
-        writeConfig()
+    if (baseImageNeedsUpdate(imageTags)) {
+        updateBaseImage(imageTags[0])
+        return true
+    }
+    return false
+}
+
+private def tryUpdateForceBuild() {
+    if (config.forceBuild) {
+        config.forceBuild = false
         return true
     }
     return false
@@ -38,13 +55,16 @@ private def getBaseImageTags() {
     versions.results
 }
 
-private def needsUpdate(tags) {
-    (config.forceBuild) || ((tags.size() > 0) && (config.baseImageTag != tags[0].name))
+private def baseImageNeedsUpdate(tags) {
+    ((tags.size() > 0) && (config.baseImageTag != tags[0].name))
 }
 
-private def updateConfig(tag) {
+private def updateBaseImage(tag) {
     config.baseImageTag = tag.name
     config.version.minor = config.version.minor + 1
+}
+
+private def updateForceBuild() {
     config.forceBuild = false
 }
 
@@ -57,7 +77,7 @@ def publishToGit() {
     ensureGitConfigured()
     sshagent(credentials: ["${gitCredentialsId}"]) {
         sh "git add CI/build-config.yaml"
-        sh "git commit -m\"Bump Base Image to ${config.baseImageTag}\""
+        sh "git commit -m\"New Image Configured\""
         sh "git push origin HEAD:${config.releaseBranch}"                    
     }
 }
@@ -107,6 +127,11 @@ def baseImageTag() {
 def maintainer() {
     ensureConfigured()
     config.maintainer
+}
+
+def forceBuild() {
+    ensureConfigured()
+    config.forceBuild
 }
 
 return this
