@@ -112,9 +112,6 @@ pipeline {
                 branch "${buildConfig.releaseBranch()}"
             }                      
             steps {
-                script {
-                    configGit()
-                }
                 sshagent(credentials: ['github-bot']) {
                     sh "git tag -a ${buildConfig.imageTag()} -m \"Image ${buildConfig.image()}:${buildConfig.imageTag()} \
                                                         \n\n New image released. Get it with: \
