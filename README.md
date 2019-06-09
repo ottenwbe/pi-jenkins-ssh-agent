@@ -18,9 +18,10 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ```
 .
 ├── CI                      // Jenkins pipeline to build the ssh agent
-│   ├── build-config.yaml    
+│   ├── build-config.yaml   // Build configuration parameters 
+│   ├── buildConfig.groovy  // Helper scripts
 │   ├── goss.yaml           // GOSS Tests for the Docker image
-│   └── Jenkinsfile         
+│   └── Jenkinsfile         // The pipeline
 ├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
 ├── LICENSE
 ├── README.md
