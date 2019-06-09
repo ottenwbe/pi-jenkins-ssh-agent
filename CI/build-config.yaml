@@ -1,6 +1,6 @@
 version:
   major: 0
-  minor: 3
+  minor: 4
 baseImageTag: stretch-20190524
 maintainer: Beate Ottenwaelder <ottenwbe.public@gmail.com>
 dockerOrg: ottenwbe
@@ -10,4 +10,4 @@ os: linux
 releaseBranch: production
 baseImageURL: https://registry.hub.docker.com/v2/repositories/balenalib/rpi-raspbian/tags?page_size=1024
 pattern: stretch-\d{8}
-forceBuild: true
+forceBuild: false
