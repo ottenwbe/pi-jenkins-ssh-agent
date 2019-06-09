@@ -39,7 +39,8 @@ pipeline {
                     buildConfig.init()
                     buildConfig.configGit('BettysBot', 'github-bot')
 
-                    echo "Configuration for image ${buildConfig.image()} read"
+                    echo "Configuration for image ${buildConfig.image()}"
+                    echo "Force Build=${buildConfig.forceBuild()}"
                 }
             }
         }
