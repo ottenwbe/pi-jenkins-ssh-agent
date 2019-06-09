@@ -69,7 +69,8 @@ pipeline {
                 environment name: 'REQUIRE_BUILD', value: 'True' 
             }               
             steps {
-                sh "docker build --build-arg BASE_IMAGE_TAG=${buildConfig.baseImageTag()}  \
+                sh "docker build --no-cache \
+                                 --build-arg BASE_IMAGE_TAG=${buildConfig.baseImageTag()}  \
                                  --label 'version=${buildConfig.version()}' \
                                  --label 'commit=${env.GIT_COMMIT}' \
                                  --label 'base-image=${buildConfig.baseImageTag()}' \
@@ -112,9 +113,6 @@ pipeline {
                 branch "${buildConfig.releaseBranch()}"
             }                      
             steps {
-                script {
-                    configGit()
-                }
                 sshagent(credentials: ['github-bot']) {
                     sh "git tag -a ${buildConfig.imageTag()} -m \"Image ${buildConfig.image()}:${buildConfig.imageTag()} \
                                                         \n\n New image released. Get it with: \
