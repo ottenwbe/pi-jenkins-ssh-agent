@@ -17,7 +17,7 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ├── CI                      // Files required by the Jenkins pipeline 
 │   ├── build-config.yaml   // Build configuration parameters 
 │   ├── buildConfig.groovy  // Helper scripts 
-│   ├── goss.yaml           // GOSS tests for the Docker image
+│   ├── goss.yaml           // GOSS tests for the docker image
 │   └── Jenkinsfile         // The pipeline
 ├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
 ├── LICENSE
@@ -49,7 +49,7 @@ A Jenkinsfile is included to build the ssh agent with a [Jenkins](https://jenkin
     * [Docker Plugin](https://wiki.jenkins.io/display/JENKINS/Docker+Plugin). 
     * [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps)
 * The SMTP server is configured to send EMails. (see, ```Manage Jenkins > Configure System > Extended E-mail Notification```)
-* The Docker plugin is configured to spin up an existing version of the Docker ssh agent for all builds labeled with ```sshagent``` on an arm architecture (e.g., a raspberry pi). (see, ```Manage Jenkins > Configure System > Docker```)
+* The docker plugin is configured to spin up an existing version of the docker ssh agent for all builds labeled with ```sshagent``` on an arm system (e.g., a raspberry pi). (see, ```Manage Jenkins > Configure System > Docker```)
 
 #### Configure Jenkins pipeline
 
@@ -70,9 +70,9 @@ pattern: // a pattern that describes the desired base image tag, e.g., stretch-\
 version: // the ssh agent image is tagged as <major_version>.<minor_version>.<date of the build>
   major: <major_version>
   minor: <minor_version> // automatically incremented once the base image is updated to a newer tag  
-maintainer: // label for the Docker image
-DockerOrg: // the Docker organization to which the built image is pushed
-app: jenkins-ssh-agent // name of the Docker image: armv7-jenkins-ssh-agent
+maintainer: // label for the docker image
+DockerOrg: // the docker organization to which the built image is pushed
+app: jenkins-ssh-agent // name of the docker image: armv7-jenkins-ssh-agent
 arch: armv7
 os: linux
 releaseBranch: // only release images from this branch
