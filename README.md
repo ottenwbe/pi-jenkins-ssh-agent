@@ -40,7 +40,7 @@ docker build --build-arg BASE_IMAGE_TAG=stretch-20190524 -t rpi-jenkins-ssh-agen
 
 ### Build with Jenkins
 
-A Jenkinsfile is included to build the ssh agent with a [Jenkins](https://jenkins.io/) pipeline.
+The ssh agent can be built with a [Jenkins](https://jenkins.io/) pipeline.
 
 #### Prerequisites
 
