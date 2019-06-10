@@ -1,25 +1,22 @@
 # pi-jenkins-ssh-agent
 A Docker ssh agent for Jenkins that runs on Raspberry Pis (ARM).
+This docker image is based on Jenkin's [docker-ssh-slave](https://github.com/jenkinsci/docker-ssh-slave).
 
-The image is based on Jenkin's [docker-ssh-slave](https://github.com/jenkinsci/docker-ssh-slave).
+## Docker Images
 
-## Images
-
-Images are hosted on [Docker Hub](https://hub.docker.com/) and can be used with the [Jenkins Docker Plugin](https://wiki.jenkins.io/display/JENKINS/Docker+Plugin).
+[Images](https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent) are hosted on [Docker Hub](https://hub.docker.com/) and can be used with the [Jenkins Docker Plugin](https://wiki.jenkins.io/display/JENKINS/Docker+Plugin).
 
 ```
 https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ```
 
-## Build
-
-#### Repo Structure
+## Repo Structure
 
 ```
 .
-├── CI                      // Jenkins pipeline to build the ssh agent
+├── CI                      // Jenkins pipeline related files 
 │   ├── build-config.yaml   // Build configuration parameters 
-│   ├── buildConfig.groovy  // Helper scripts
+│   ├── buildConfig.groovy  // Helper scripts 
 │   ├── goss.yaml           // GOSS tests for the Docker image
 │   └── Jenkinsfile         // The pipeline
 ├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
@@ -27,6 +24,8 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ├── README.md
 └── setup-sshd              
 ```
+
+## Build
 
 ### Build locally
 
@@ -39,9 +38,11 @@ cd pi-jenkins-ssh-agent
 docker build --build-arg BASE_IMAGE_TAG=stretch-20190524 -t rpi-jenkins-ssh-agent:test .
 ```
 
-### Build on Jenkins
+### Build with Jenkins
 
 A Jenkinsfile is included to build the Docker ssh agent in a [Jenkins](https://jenkins.io/) pipeline.
+
+#### Configure Jenkins
 
 1. Ensure that the Docker plugin is installed and configured on Jenkins
     1. Configure the plugin to spin up a previous version of the Docker ssh agent for all builds labeled with ```sshagent```.
@@ -50,3 +51,5 @@ A Jenkinsfile is included to build the Docker ssh agent in a [Jenkins](https://j
     1. Select 'CI/Jenkinsfile' as _Script Path_
 1. Configure the missing credentials in Jenkins
 1. Trigger the pipeline to build the docker image
+
+#### Configure Build
