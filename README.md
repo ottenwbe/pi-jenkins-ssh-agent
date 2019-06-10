@@ -1,6 +1,6 @@
 # pi-jenkins-ssh-agent
 A Docker ssh agent for Jenkins that runs on Raspberry Pis (ARM).
-This docker image is based on Jenkin's [docker-ssh-slave](https://github.com/jenkinsci/docker-ssh-slave).
+The ssh agent's docker image is based on Jenkin's [docker-ssh-slave](https://github.com/jenkinsci/docker-ssh-slave).
 
 ## Docker Images
 
@@ -29,7 +29,7 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 
 ### Build locally
 
-The Docker ssh agent image can be built locally on an arm architecture, e.g., on a raspberry pi.
+The ssh agent's docker image can be built locally on an arm system, e.g., on a Raspberry Pi.
 Note, the BASE_IMAGE_TAG build arg has to be set to specify the version of the underlying Raspbian ([balenalib/rpi-raspbian](https://hub.docker.com/r/balenalib/rpi-raspbian)).
 
 ```
@@ -40,7 +40,7 @@ docker build --build-arg BASE_IMAGE_TAG=stretch-20190524 -t rpi-jenkins-ssh-agen
 
 ### Build with Jenkins
 
-A Jenkinsfile is included to build the Docker ssh agent in a [Jenkins](https://jenkins.io/) pipeline.
+A Jenkinsfile is included to build the Docker ssh agent with a [Jenkins](https://jenkins.io/) pipeline.
 
 #### Prerequisites
 
@@ -56,12 +56,12 @@ A Jenkinsfile is included to build the Docker ssh agent in a [Jenkins](https://j
 1. Create a ```Pipeline``` or ```Multibranch Pipeline``` project
     1. Select this [repository](https://github.com/ottenwbe/pi-jenkins-ssh-agent) or a fork of it under _SCM_
     1. Select 'CI/Jenkinsfile' as _Script Path_
-1. Configure the missing credentials (```'dockerhub```, ```'github-bot'```) in Jenkins
+1. Configure all required credentials (```'dockerhub```, ```'github-bot'```) in Jenkins
 1. Trigger the pipeline to build the docker image
 
 #### Configure Build
 
-The build is configured in the ```build-config.yaml``` file. This allows the Jenkins pipeline to automatically update the configuration.
+The build is configured through the ```build-config.yaml``` file. This allows the Jenkins pipeline to automatically update the configuration.
 
 ```
 baseImageTag: // stores the latest base image tag that was used to build the ssh agent image (Note: maintained by the Jenkins pipeline)
