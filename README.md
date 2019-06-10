@@ -1,5 +1,5 @@
 # pi-jenkins-ssh-agent
-A Docker ssh agent for Jenkins that runs on Raspberry Pis (ARM).
+A docker ssh agent for Jenkins that runs on Raspberry Pis (ARM).
 The ssh agent's docker image is based on Jenkin's [docker-ssh-slave](https://github.com/jenkinsci/docker-ssh-slave).
 
 ## Docker Images
@@ -17,7 +17,7 @@ https://hub.docker.com/r/ottenwbe/armv7-jenkins-ssh-agent
 ├── CI                      // Files required by the Jenkins pipeline 
 │   ├── build-config.yaml   // Build configuration parameters 
 │   ├── buildConfig.groovy  // Helper scripts 
-│   ├── goss.yaml           // GOSS tests for the docker image
+│   ├── goss.yaml           // GOSS tests for the Docker image
 │   └── Jenkinsfile         // The pipeline
 ├── Dockerfile              // Docker ssh agent's (armv7) Dockerfile
 ├── LICENSE
@@ -40,7 +40,7 @@ docker build --build-arg BASE_IMAGE_TAG=stretch-20190524 -t rpi-jenkins-ssh-agen
 
 ### Build with Jenkins
 
-A Jenkinsfile is included to build the Docker ssh agent with a [Jenkins](https://jenkins.io/) pipeline.
+A Jenkinsfile is included to build the ssh agent with a [Jenkins](https://jenkins.io/) pipeline.
 
 #### Prerequisites
 
@@ -70,9 +70,9 @@ pattern: // a pattern that describes the desired base image tag, e.g., stretch-\
 version: // the ssh agent image is tagged as <major_version>.<minor_version>.<date of the build>
   major: <major_version>
   minor: <minor_version> // automatically incremented once the base image is updated to a newer tag  
-maintainer: // label for the docker image
-dockerOrg: // the docker organization to which the built image is pushed
-app: jenkins-ssh-agent // name of the docker image: armv7-jenkins-ssh-agent
+maintainer: // label for the Docker image
+DockerOrg: // the Docker organization to which the built image is pushed
+app: jenkins-ssh-agent // name of the Docker image: armv7-jenkins-ssh-agent
 arch: armv7
 os: linux
 releaseBranch: // only release images from this branch
