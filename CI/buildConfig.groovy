@@ -97,7 +97,7 @@ private def writeConfig() {
     writeYaml file: 'CI/build-config.yaml', data: config            
 }
 
-def publishToGit() {
+def publishToReleaseBranch() {
     ensureGitConfigured()
     sshagent(credentials: ["${gitCredentialsId}"]) {
         sh "git add CI/build-config.yaml"

@@ -30,7 +30,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10', daysToKeepStr: '30'))
         timeout(time: 2, unit: 'HOURS')
     }
-    triggers { cron('H 22 * * *') }
+    triggers { cron('H H * * *') }
     stages {      
         stage('Configure Build') {
             steps {
@@ -61,7 +61,7 @@ pipeline {
             }               
             steps {
                 script {                    
-                    buildConfig.publishToGit()                    
+                    buildConfig.publishToReleaseBranch()                    
                 }
             }
         }          
