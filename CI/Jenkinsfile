@@ -30,7 +30,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10', daysToKeepStr: '30'))
         timeout(time: 2, unit: 'HOURS')
     }
-    triggers { cron('H H H * *') }
+    triggers { cron('H H * * *') }
     stages {      
         stage('Configure Build') {
             steps {
@@ -47,8 +47,8 @@ pipeline {
         stage('Update Build Config'){
             steps {
                 script {                              
-                    def configNeedsUpdate = buildConfig.updateBaseImages()
-                    if (configNeedsUpdate) {
+                    def configUpdated = buildConfig.updateBaseImages()
+                    if (configUpdated) {
                         env.REQUIRE_BUILD = "True"
                     }
                 }
@@ -61,7 +61,7 @@ pipeline {
             }               
             steps {
                 script {                    
-                    buildConfig.publishToGit()                    
+                    buildConfig.publishToReleaseBranch()                    
                 }
             }
         }          
