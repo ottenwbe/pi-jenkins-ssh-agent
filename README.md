@@ -69,7 +69,7 @@ baseImageURL: // reference to the tags of the base image; used to find newer bas
 pattern: // a pattern that describes the desired base image tag, e.g., stretch-\d{8} to only use stretch images
 version: // the ssh agent image is tagged as <major_version>.<minor_version>.<date of the build>
   major: <major_version>
-  minor: <minor_version> // automatically incremented once the base image is updated to a newer tag  
+  minor: <minor_version> // automatically incremented once the base image tag is updated to a newer tag  
 maintainer: // label for the docker image
 DockerOrg: // the docker organization to which the built image is pushed
 app: jenkins-ssh-agent // name of the docker image: armv7-jenkins-ssh-agent
