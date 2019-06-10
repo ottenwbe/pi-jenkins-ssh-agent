@@ -67,14 +67,14 @@ The build is configured through the ```build-config.yaml``` file. This allows th
 baseImageTag: // stores the latest base image tag that was used to build the ssh agent image (Note: maintained by the Jenkins pipeline)
 baseImageURL: // reference to the tags of the base image; used to find newer base image tags
 pattern: // a pattern that describes the desired base image tag, e.g., stretch-\d{8} to only use stretch images
-version: // the ssh agent image is tagged as <major_version>.<minor_version>.<date of the build>
+version: // the ssh agent's docker image is tagged as <major_version>.<minor_version>.<date of the build>
   major: <major_version>
   minor: <minor_version> // automatically incremented once the base image tag is updated to a newer tag  
-maintainer: // label for the docker image
+maintainer: // maintainer label for the docker image
 DockerOrg: // the docker organization to which the built image is pushed
-app: jenkins-ssh-agent // name of the docker image: armv7-jenkins-ssh-agent
+app: jenkins-ssh-agent // <arch>-<app>: name of the docker image (armv7-jenkins-ssh-agent) 
 arch: armv7
 os: linux
-releaseBranch: // only release images from this branch
+releaseBranch: // only publish images and changes from this branch
 forceBuild: // will force a build although no newer base image is found
 ```
