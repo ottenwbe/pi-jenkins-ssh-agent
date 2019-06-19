@@ -1,7 +1,7 @@
 version:
   major: 0
-  minor: 5
-baseImageTag: stretch-20190612
+  minor: 6
+baseImageTag: stretch-20190619
 maintainer: Beate Ottenwaelder <ottenwbe.public@gmail.com>
 dockerOrg: ottenwbe
 app: jenkins-ssh-agent
