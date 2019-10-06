@@ -1,6 +1,6 @@
 version:
   major: 0
-  minor: 10
+  minor: 9
 baseImageTag: none
 maintainer: Beate Ottenwaelder <ottenwbe.public@gmail.com>
 dockerOrg: ottenwbe
