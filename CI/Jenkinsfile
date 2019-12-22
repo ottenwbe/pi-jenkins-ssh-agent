@@ -75,7 +75,7 @@ pipeline {
             }   
             environment{
                 GOSS_FILES_STRATEGY="cp"
-                GOSS_SLEEP="5"
+                GOSS_SLEEP="10"
             }         
             steps {
                 dir ("CI") {
