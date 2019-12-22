@@ -10,10 +10,9 @@ package:
     installed: true
   git:
     installed: true
-service:
-  ssh:
-    enabled: true
-    running: true
+port:
+  tcp:22:
+    listening: true
 command:
   goss:
     exit-status: 0  

@@ -48,6 +48,7 @@ The ssh agent can be built with a [Jenkins](https://jenkins.io/) pipeline.
 * Jenkins Plugins:
     * [Docker Plugin](https://wiki.jenkins.io/display/JENKINS/Docker+Plugin). 
     * [Pipeline Utility Steps](https://plugins.jenkins.io/pipeline-utility-steps)
+    * [SSH Agent Plugin](https://plugins.jenkins.io/ssh-agent)
 * The SMTP server is configured to send EMails. (see, ```Manage Jenkins > Configure System > Extended E-mail Notification```)
 * The docker plugin is configured to spin up an existing version of the docker ssh agent for all builds labeled with ```sshagent``` on an arm system (e.g., a raspberry pi). (see, ```Manage Jenkins > Configure System > Docker```)
 
@@ -56,7 +57,7 @@ The ssh agent can be built with a [Jenkins](https://jenkins.io/) pipeline.
 1. Create a ```Pipeline``` or ```Multibranch Pipeline``` project
     1. Select this [repository](https://github.com/ottenwbe/pi-jenkins-ssh-agent) or a fork of it under _SCM_
     1. Select 'CI/Jenkinsfile' as _Script Path_
-1. Configure all required credentials (```'dockerhub```, ```'github-bot'```) in Jenkins
+1. Configure all required credentials (```'dockerhub```, ```'github-bot'```) in the credentials store
 1. Trigger the pipeline to build the docker image
 
 #### Configure Build
