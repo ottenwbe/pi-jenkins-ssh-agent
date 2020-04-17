@@ -68,7 +68,7 @@ pipeline {
                                  --label 'maintainer=${buildConfig.maintainer()}' \
                                  -t ${buildConfig.image()}:${buildConfig.imageTag()} ."
             }
-        }
+        }        
         stage('Test Docker Image') {  
             when { 
                 environment name: 'REQUIRE_BUILD', value: 'True' 
@@ -122,7 +122,22 @@ pipeline {
                     sh "git push origin ${buildConfig.imageTag()}"
                 }
             }
-        }                       
+        }    
+        stage('Cleanup Docker Image'){
+            when { 
+                environment name: 'REQUIRE_BUILD', value: 'True' 
+            }               
+            steps {
+                sh "docker build --no-cache \
+                                 --build-arg BASE_IMAGE_TAG=${buildConfig.baseImageTag()}  \
+                                 --label 'version=${buildConfig.version()}' \
+                                 --label 'commit=${env.GIT_COMMIT}' \
+                                 --label 'base-image=${buildConfig.baseImageTag()}' \
+                                 --label 'build-date=${buildConfig.buildDate()}'  \
+                                 --label 'maintainer=${buildConfig.maintainer()}' \
+                                 -t ${buildConfig.image()}:${buildConfig.imageTag()} ."
+            }
+        }                   
     }
     post {
         success {
