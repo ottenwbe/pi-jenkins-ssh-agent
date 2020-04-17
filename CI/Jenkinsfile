@@ -122,16 +122,7 @@ pipeline {
                     sh "git push origin ${buildConfig.imageTag()}"
                 }
             }
-        }    
-        stage('Cleanup Docker Image'){
-            when { 
-                environment name: 'REQUIRE_BUILD', value: 'True' 
-            }               
-            steps {
-                sh "docker rm ${buildConfig.image()}:${buildConfig.imageTag()}"
-                sh "docker rm ${buildConfig.image()}:latest"                          
-            }
-        }                   
+        }                    
     }
     post {
         always {
