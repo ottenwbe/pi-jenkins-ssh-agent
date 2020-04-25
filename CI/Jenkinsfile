@@ -127,10 +127,8 @@ pipeline {
     post {
         always {
             echo 'Cleanup'
-            //if (env.REQUIRE_BUILD == 'True') {            
-                sh "docker rm ${buildConfig.image()}:${buildConfig.imageTag()}" || true
-                sh "docker rm ${buildConfig.image()}:latest" || true       
-            //}
+            sh "docker rm ${buildConfig.image()}:${buildConfig.imageTag()}" || true
+            sh "docker rm ${buildConfig.image()}:latest" || true       
         }        
         success {
             script {
