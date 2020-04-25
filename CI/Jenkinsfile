@@ -127,8 +127,8 @@ pipeline {
     post {
         always {
             echo 'Cleanup'
-            sh "docker rm ${buildConfig.image()}:${buildConfig.imageTag()}" 
-            sh "docker rm ${buildConfig.image()}:latest" 
+            sh "docker rmi ${buildConfig.image()}:${buildConfig.imageTag()} || true" 
+            sh "docker rmi ${buildConfig.image()}:latest || true"        
         }        
         success {
             script {
