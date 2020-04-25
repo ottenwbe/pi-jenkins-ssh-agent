@@ -68,7 +68,7 @@ pipeline {
                                  --label 'maintainer=${buildConfig.maintainer()}' \
                                  -t ${buildConfig.image()}:${buildConfig.imageTag()} ."
             }
-        }
+        }        
         stage('Test Docker Image') {  
             when { 
                 environment name: 'REQUIRE_BUILD', value: 'True' 
@@ -122,9 +122,14 @@ pipeline {
                     sh "git push origin ${buildConfig.imageTag()}"
                 }
             }
-        }                       
+        }                    
     }
     post {
+        always {
+            echo 'Cleanup'
+            sh "docker rmi ${buildConfig.image()}:${buildConfig.imageTag()} || true" 
+            sh "docker rmi ${buildConfig.image()}:latest || true"        
+        }        
         success {
             script {
                 if (env.REQUIRE_BUILD == 'True') {
